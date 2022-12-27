@@ -1,0 +1,25 @@
+﻿@model IEnumerable<Passenger>
+<table class="table table-bordered" id="passengerTable">
+    <thead style="background-color:darksalmon">
+        <tr>
+            <th>Picture</th>
+            <th>Passenger Name</th>
+            <th>Phone</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr id="passenger_tr_@p.PassengerId" style="background-color:blanchedalmond">
+                <td><img src="~/Pictures/@p.Picture" style="width:40px; height:40px;" class="img-thumbnail rounded-circle" /></td>
+                <td>@p.PassengerName</td>
+                <td>@p.Phone</td>
+                <td>
+                   <button type="button" class="btn btn-primary btn-sm rounded-circle edit" data-db-type="passenger" data-db-action="edit" data-passenger-id="@p.PassengerId" data-controller-action="EditPassenger"><i class="bi bi-pencil"></i></button>
+                   <button type="button" class="btn btn-danger btn-sm rounded-circle del" data-db-type="passenger" data-db-action="delete" data-passenger-id="@p.PassengerId" data-controller-action="DeletePassenger"><i class="bi bi-trash"></i></button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

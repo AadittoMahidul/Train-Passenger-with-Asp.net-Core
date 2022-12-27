@@ -1,0 +1,44 @@
+﻿@model IEnumerable<TicketItem>
+<table class="table table-bordered" id="ticketitemTable">
+    <thead style="background-color:darkgoldenrod">
+        <tr>
+
+            <th>
+                @Html.DisplayNameFor(model => model.Passenger.Picture)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Passenger.PassengerName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ticket.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Quantity)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr id="@($"ticketitem_tr_{@item.TicketId}_{@item.PassengerId}")" style="background-color:blanchedalmond">
+                <td>
+                    <img src="/Pictures/@item.Passenger.Picture" style="width:40px; height:40px;" class="img-thumbnail rounded-circle" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Passenger.PassengerName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Ticket.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+                <td>
+                    <button type="button" class="btn btn-primary btn-sm rounded-circle edit" data-db-type="ticketitem" data-db-action="edit"  data-ticket-id="@item.TicketId" data-passenger-id="@item.PassengerId" data-controller-action="EditTicketItem"><i class="bi bi-pencil"></i></button>
+                      @*<button type="button" class="btn btn-danger btn-sm rounded-circle del" data-db-type="ticketitem" data-db-action="delete" data-ticket-id="@item.TicketId" data-passenger-id="@item.PassengerId" data-controller-action="DeleteTicketItem"><i class="bi bi-trash"></i></button>*@
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

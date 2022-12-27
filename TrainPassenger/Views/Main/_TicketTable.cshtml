@@ -1,0 +1,58 @@
+﻿@model IEnumerable<Ticket>
+@{
+    int? id = (int?)ViewData["id"];
+
+}
+<table class="table table-bordered" id="ticketTable">
+    <thead style="background-color:darksalmon">
+        <tr>
+            <th></th>
+            
+            <th>
+                @Html.DisplayNameFor(model => model.JourneyDate)
+            </th>
+            <th>
+                Train Name
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Category)
+            </th>
+            @*<th>
+                @Html.DisplayNameFor(model => model.IsAvailable)
+            </th>*@
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr id="ticket_tr_@item.TicketId" class="@(id.HasValue && id == item.TicketId ? "bg-info": "")" style="background-color:blanchedalmond">
+                <td><button type="button" class="btn btn-sm select @(id.HasValue && id == item.TicketId ? "disabled": "")" data-ticket-id="@item.TicketId">Select</button></td>
+                
+                <td>
+                    @Html.DisplayFor(modelItem => item.JourneyDate)
+                </td>
+                <td>
+                    @item.Train?.TrainName
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Category)
+                </td>
+                @*<td>
+                    @Html.DisplayFor(modelItem => item.IsAvailable)
+                </td>*@
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    <button type="button" class="btn btn-primary btn-sm rounded-circle edit" data-db-type="ticket" data-db-action="edit" data-ticket-id="@item.TicketId" data-controller-action="EditTicket"><i class="bi bi-pencil"></i></button>
+                    <button type="button" class="btn btn-danger btn-sm rounded-circle del" data-db-type="ticket" data-db-action="delete" data-ticket-id="@item.TicketId" data-controller-action="DeleteTicket"><i class="bi bi-trash"></i></button>
+                </td>
+                
+            </tr>
+        }
+    </tbody>
+</table>

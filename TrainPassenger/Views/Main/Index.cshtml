@@ -1,0 +1,670 @@
+﻿@model DataViewModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>A Single Page Application by ASP.NETCore</h2>
+
+<div class="row m-1">
+    <div class="col-6 border-end">
+        <h3>Trains</h3>
+        <div class="d-flex justify-content-end mb-1">
+            <button class="btn btn-primary btn-sm" id="addTran"><span class="bi bi-plus"></span> Add</button>
+        </div>
+        @await Html.PartialAsync("_TrainTable", Model?.Trains)
+    </div>
+    <div class="col-6">
+        <h3>Passengers</h3>
+        <div class="d-flex justify-content-end mb-1">
+            <button class="btn btn-primary btn-sm" id="addpsngr"><span class="bi bi-plus"></span> Add</button>
+        </div>
+        @await Html.PartialAsync("_PassengerTable", Model?.Passengers)
+    </div>
+</div>
+<div class="row">
+    <div class="col-6">
+        <h3>Tickets</h3>
+        <div class="d-flex justify-content-end mb-1">
+            <button class="btn btn-primary btn-sm" id="addtick"><span class="bi bi-plus"></span> Add</button>
+        </div>
+        @await Html.PartialAsync("_TicketTable", Model?.Tickets, new ViewDataDictionary(this.ViewData) { { "id", Model?.SelectedTicketId } })
+    </div>
+    <div class="col-6">
+        <h3>Tickets Items</h3>
+        <div class="d-flex justify-content-end mb-1">
+            <button class="btn btn-primary btn-sm" id="addti"><span class="bi bi-plus"></span>Connect with Ticket table</button>
+        </div>
+        <div id="tidiv">
+            @await Html.PartialAsync("_TicketItemTable", Model?.TicketItems)
+        </div>
+    </div>
+</div>
+<!--Modal-->
+<div class="modal" tabindex="-1" id="modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="mtitle"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="mbody">
+                <p>Modal body text goes here.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" id="save" class="btn btn-primary" form="f">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" tabindex="-1" id="delModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-white">
+                <h5 class="modal-title">Confirm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure to delete this item?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="deleteItem">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Toast-->
+<div class="position-absolute bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="toastNotice" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto" id="toasthead">Bootstrap</strong>
+
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toastbody">
+            Hello, world! This is a toast message.
+        </div>
+    </div>
+</div>
+
+@section styles
+    {
+    <link rel="stylesheet" href="~/libs/datepicker/css/bootstrap-datepicker.standalone.css" />
+}
+    @section scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script src="~/libs/datepicker/js/bootstrap-datepicker.js"></script>
+    <script>
+        var myModal = new bootstrap.Modal(document.getElementById('modal'));
+        var delModal = new bootstrap.Modal(document.getElementById('delModal'));
+        var myAlert = document.getElementById('toastNotice');//select id of toast
+        var bsAlert = new bootstrap.Toast(myAlert);//inizialize it
+        var itemToWorkWith;
+        $(() => {
+            $(".date").datepicker({
+                format: 'yyyy-mm-dd'
+            });
+
+            //Ticket select start
+            $(document).on("click", "button.select", function () {
+                var ticketId = $(this).data("ticket-id");
+                console.log(ticketId)
+                var previousSelected = $("tr.bg-info")
+                previousSelected.removeClass("bg-info");
+                previousSelected.find("button.btn").removeClass("disabled");
+                $(this).closest("tr").addClass("bg-info");
+                $(this).closest("tr").find("button.btn").addClass("disabled");
+                $.ajax({
+                    type: "POST",
+                    url: "/Main/GetSelectedTicketItems/" + ticketId,
+                    success: r => {
+                        $("#tidiv").html(r);
+                    }
+                })
+            });
+            //Ticket select end
+            //Delete item start
+            $(document).on('click', 'button.del', function () {
+                itemToWorkWith = $(this);
+                delModal.show();
+                //console.log(`${dbType} ${dbAction} ${controllerAction}`);
+                //console.log(id);
+            });
+            $('#deleteItem').click(() => {
+                delModal.hide();
+                var dbType = itemToWorkWith.data("db-type");
+                var dbAction = itemToWorkWith.data("db-action");
+                var controllerAction = itemToWorkWith.data("controller-action");
+                var id = itemToWorkWith.data(`${dbType}-id`);
+                console.log(`${dbType} ${dbAction} ${controllerAction}`);
+                console.log(id);
+                console.log($(`#${dbType}_tr_${id}`))
+                $(`#${dbType}_tr_${id}`).remove();
+                if (dbType == 'ticketitem') {
+                    var tid = itemToWorkWith.data("ticket-id");
+                    var pid = itemToWorkWith.data("passenger-id");
+                    $.ajax({
+                        type: 'POST',
+                        url: `/Main/${controllerAction}/?tid=${tid}&pid=${pid}`,
+                        success: r => {
+                            if (r.success == true) {
+                                $("#toasthead").html("Success");
+                                $("#toastbody").html(r.message);
+
+                                bsAlert.show();
+                                $(`#${dbType}_tr_${tid}_${pid}`).remove();
+                                //$(`#${dbType}_tr_${id}`).remove();
+                            }
+                            else {
+                                $("#toasthead").html("Failed");
+                                $("#toastbody").html(r.message);
+                                bsAlert.show();
+                            }
+                        }
+                    });
+                }
+                else {
+                    $.ajax({
+                        type: 'POST',
+                        url: `/Main/${controllerAction}/${id}`,
+                        success: r => {
+                            if (r.success == true) {
+                                $("#toasthead").html("Success");
+                                $("#toastbody").html(r.message);
+
+                                bsAlert.show();
+                                $(`#${dbType}_tr_${id}`).remove();
+                            }
+                            else {
+                                $("#toasthead").html("Failed");
+                                $("#toastbody").html(r.message);
+
+                                bsAlert.show();
+                            }
+                        }
+                    });
+                }
+            });
+
+            //Delete item end
+            //Edit action start
+            $(document).on('click', 'button.edit', function () {
+                var dbType = $(this).data("db-type");
+                var dbAction = $(this).data("db-action");
+                var controllerAction = $(this).data("controller-action");
+                var id = $(this).data(`${dbType}-id`);
+                console.log(`${dbType} ${dbAction} ${controllerAction}`);
+                //console.log(id);
+                if (dbType == 'ticketitem') {
+                    var tid = $(this).data("ticket-id");
+                    var pid = $(this).data("passenger-id");
+                    $.ajax({
+                        type: "GET",
+                        url: `/Main/${controllerAction}/?tid=${tid}&pid=${pid}`,
+                        success: r => {
+                            $("#mbody").html(r);
+                            $("#mtitle").html(`Edit ${dbType}`);
+
+                            myModal.show();
+                            var f = $("#f");
+                            //console.log(f);
+                            //f.removeData('validator');
+
+                            // f.removeData('unobtrusiveValidation');
+                            $.validator.unobtrusive.parse(f);
+                            if (dbType == 'ticket') {
+                                $(".date").datepicker({
+                                format: 'yyyy-mm-dd'
+                            });
+                            }
+                        }
+
+                    });
+                }
+                else {
+                    $.ajax({
+                        type: "GET",
+                        url: `/Main/${controllerAction}/${id}`,
+                        success: r => {
+                            $("#mbody").html(r);
+                            $("#mtitle").html(`Edit ${dbType}`);
+
+                            myModal.show();
+                            var f = $("#f");
+                            //console.log(f);
+                            //f.removeData('validator');
+                            // f.removeData('unobtrusiveValidation');
+                            $.validator.unobtrusive.parse(f);
+                            if (dbType == 'ticket') {
+                                $(".date").datepicker({
+                                format: 'yyyy-mm-dd'
+                                });
+                            }
+                        }
+                    });
+                }
+                //console.log(id);
+            });
+            //Edit action end
+            //delete order item on insert start
+            $(document).on("click", "button.delti-insert", function () {
+                if ($("button.delti-insert").length < 2) return;
+                $(this).parent().parent().remove();
+            })
+            //delete Ticket item on insert end
+            //Add Train start
+            $("#addTran").click(() => {
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("CreateTrain", "Main")",
+                    success: r => {
+                        $("#mbody").html(r);
+                        $("#mtitle").html("Add Train");
+
+                        myModal.show();
+                        var f = $("#f");
+                        console.log(f);
+                        //f.removeData('validator');
+
+                        // f.removeData('unobtrusiveValidation');
+                        $.validator.unobtrusive.parse(f);
+                    }
+
+                });
+            });
+            //Add Train end
+            //Add Ticket item start
+            $("#addti").click(function () {
+                var id = $('button.select.disabled').data("ticket-id")
+                $.ajax({
+                    type: "GET",
+                    url: "/Main/CreateTicketItem/" + id,
+                    success: r => {
+                        $("#mbody").html(r);
+                        $("#mtitle").html("Add Ticket Item");
+
+                        myModal.show();
+                        var f = $("#f");
+                        console.log(f);
+                        //f.removeData('validator');
+                        // f.removeData('unobtrusiveValidation');
+                        $.validator.unobtrusive.parse(f);
+                    }
+
+                });
+            })
+            //Add Ticket item end
+            //Add Passenger start
+            $("#addpsngr").click(() => {
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("CreatePassenger", "Main")",
+                    success: r => {
+                        $("#mbody").html(r);
+                        $("#mtitle").html("Add Passenger");
+
+                        myModal.show();
+                        var f = $("#f");
+                        console.log(f);
+                        //f.removeData('validator');
+
+                        // f.removeData('unobtrusiveValidation');
+                        $.validator.unobtrusive.parse(f);
+                    }
+
+                });
+
+
+                //toast.show();
+            });
+            //Add Passenger end
+            //Add Ticket start
+            $("#addtick").click(() => {
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("CreateTicket", "Main")",
+                    success: r => {
+                        $("#mbody").html(r);
+                        $("#mtitle").html("Add Ticket");
+
+                        myModal.show();
+                        var f = $("#f");
+                        console.log(f);
+                        //f.removeData('validator');
+                        // f.removeData('unobtrusiveValidation');
+                        $.validator.unobtrusive.parse(f);
+                        $(".date").datepicker({
+                          format: 'yyyy-mm-dd'
+                         });
+                    }
+
+                });
+            });
+            //Add Ticket end
+            //Save click start
+            $("#save").click(function () {
+                var button = $(this);
+                var isValid = $("#f").valid();
+                //console.log(isValid);
+                if (isValid == true) {
+                    var dbType = $("#f").data("db-type");
+                    var dbAction = $("#f").data("db-action");
+                    var controllerAction = $("#f").data("controller-action");
+                    console.log(`${dbType} ${dbAction} ${controllerAction}`);
+                    var data = createData(dbType, dbAction);
+                    //console.log(data);
+                    //if (dbType == 'ticket' && dbAction == 'edit') {
+                    //    $.each($('select.added'), (i, v) => {
+                    //        if ($(v).val() == '') return;
+                    //    });
+                    //    $.each($('input.added'), (i, v) => {
+                    //        if ($(v).val() == '') return;
+                    //    });
+                    //}
+                    //console.log(data);
+                    if (dbType == "train") {
+                        $.ajax({
+                            url: `/Main/${controllerAction}`,
+                            type: "POST",
+                            data: data,
+                            dataType: "json",
+                            success: r => {
+                                if (dbAction == "insert") {
+                                    $("#toasthead").html("Success");
+                                    $("#toastbody").html("Data inserted successfully");
+                                    myModal.hide();
+                                    bsAlert.show();
+                                    addToTable(dbType, r);
+                                    //replaceRow(dbType, `train_tr_${r.trainId}`, dbAction);
+                                }
+                                if (dbAction == "edit") {
+                                    $("#toasthead").html("Success");
+                                    $("#toastbody").html("Data updated successfully");
+                                    myModal.hide();
+                                    bsAlert.show();
+                                    replaceRow(dbType, `train_tr_${r.trainId}`, r);
+                                }
+
+                            },
+                            error: function (err) {
+                                alert(err.statusText);
+                                $("#toasthead").html("Failed");
+                                $("#toastbody").html("Failed to insert data");
+
+                                bsAlert.show();
+                            }
+                        });
+                    }
+                    if (dbType == "passenger") {
+                        $.ajax({
+                            url: `/Main/${controllerAction}`,
+                            type: "POST",
+                            contentType: false, // Not to set any content header
+                            processData: false, // Not to process data
+                            data: data,
+                            success: function (result) {
+                                console.log(result);
+                                if (dbAction == "insert") {
+                                    $("#toastheader").html("Success");
+                                    $("#toastbody").html("Data inserted successfully");
+                                    bsAlert.show();
+                                    if (dbAction == 'insert') addToTable(dbType, result);
+
+                                }
+                                if (dbAction == "edit") {
+                                    $("#toasthead").html("Success");
+                                    $("#toastbody").html("Data saved successfully");
+                                    myModal.hide();
+                                    bsAlert.show();
+                                    replaceRow(dbType, `passenger_tr_${result.passengerId}`, result);
+
+                                }
+                                myModal.hide();
+                            },
+                            error: function (err) {
+                                alert(err.statusText);
+                                $("#toasthead").html("Failed");
+                                $("#toastbody").html("Failed to insert data");
+                                bsAlert.show();
+                            }
+                        });
+                    }
+                    if (dbType == "ticket") {
+                        var isValid = $("#f").valid();
+                        if (isValid == true) {
+                            var dbType = $("#f").data("db-type");
+                            var dbAction = $("#f").data("db-action");
+                            var controllerAction = $("#f").data("controller-action");
+                            //console.log(`${dbType} ${dbAction} ${controllerAction}`);
+                            var data = $("#f").serialize();
+                            $.ajax({
+                                type: "POST",
+                                url: `/Main/${controllerAction}`,
+                                data: data,
+                                success: r => {
+                                    console.log(r);
+                                    $("#toasthead").html("Success");
+                                    $("#toastbody").html("Data inserted successfully");
+                                    myModal.hide();
+                                    bsAlert.show();
+                                    if (dbAction == 'insert') addToTable(dbType, r);
+                                    if (dbAction == "edit") {
+                                        $("#toasthead").html("Success");
+                                        $("#toastbody").html("Data saved successfully");
+                                        myModal.hide();
+                                        bsAlert.show();
+                                        //console.log( `ticket_tr_${r.ticketId}`);
+                                        replaceRow(dbType, `ticket_tr_${r.ticketId}`, r);
+
+                                    }
+                                }
+                            });
+                        }
+                    }
+                    if (dbType == "ticketitem") {
+                        var isValid = $("#f").valid();
+                        console.log(isValid)
+                        if (isValid == true) {
+                            var dbType = $("#f").data("db-type");
+                            var dbAction = $("#f").data("db-action");
+                            var controllerAction = $("#f").data("controller-action");
+                            console.log(`${dbType} ${dbAction} ${controllerAction}`);
+                            var data = $("#f").serialize();
+                            $.ajax({
+                                type: "POST",
+                                url: `/Main/${controllerAction}`,
+                                data: data,
+                                success: r => {
+                                    console.log(r);
+                                    $("#toasthead").html("Success");
+                                    $("#toastbody").html("Data inserted successfully");
+                                    myModal.hide();
+                                    bsAlert.show();
+                                    if (dbAction == 'insert') addToTable(dbType, r);
+                                    if (dbAction == "edit") {
+                                        $("#toasthead").html("Success");
+                                        $("#toastbody").html("Data saved successfully");
+                                        myModal.hide();
+                                        bsAlert.show();
+                                        replaceRow(dbType, `ticketitem_tr_${r.ticketId}_${r.passengerId}`, r);
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+            //Save click end
+            //Add more ticket item start
+            $(document).on("click", "button#addItemForm", () => {
+                $.ajax({
+                    type: 'GET',
+                    url: '/Main/CreateItem',
+                    success: r => {
+
+                        $("div#items").append(r);
+
+                    }
+                })
+            });
+            //Add more ticket item end
+        });
+        //Function form data builder start
+        function createData(dbType, dbAction) {
+            if (dbType == "train") {
+                var obj = {
+                    TrainName: $("#TrainName").val(),
+                    StationAddress: $("#StationAddress").val(),
+                    Destination: $("#Destination").val()
+                };
+                if (dbAction != 'insert') obj.TrainId = $("#TrainId").val();
+                return obj;
+            }
+
+            if (dbType == "passenger") {
+                var formData = new FormData();
+                if (dbAction != 'insert') formData.append("PassengerId", $("#PassengerId").val());
+                formData.append("PassengerName", $("#PassengerName").val());
+                formData.append("Phone", $("#Phone").val());
+                formData.append("Picture", document.getElementById("Picture").files[0]);
+                return formData;
+            };
+
+        }
+        //Function replace row start
+        function replaceRow(dbType, rowid, r) {
+            if (dbType == 'train') {
+                $(`#${rowid}`).html(` <td>${r.trainName}</td>
+                                                                <td>${r.stationAddress}</td>
+                                                                <td>${r.destination}</td>
+                                                                <td>
+                                                                                        <button type="button" class="btn btn-primary btn-sm rounded-circle edit" data-db-type="train"  data-db-action="edit" data-train-id="${r.trainId}" data-controller-action="EditTrain"><i class="bi bi-pencil"></i></button>
+                                                                                        <button type="button" class="btn btn-danger btn-sm rounded-circle del" data-db-type="train"  data-db-action="delete" data-train-id="${r.trainId}" data-controller-action="DeleteTrain"><i class="bi bi-trash" ></i></button>
+                                                                </td>`);
+            }
+            if (dbType == 'passenger') {
+                console.log($(`#${rowid}`));
+                $(`#${rowid}`).html(`<td style="width:50px"><img src="/Pictures/${r.picture}" style="width:40px" class="img-thumbnail rounded-circle" /></td>
+                                                            <td>${r.passengerName}</td>
+                                                            <td>${r.phone}</td>
+                                                            <td>
+                                                                    <button type="button" class="btn btn-primary btn-sm rounded-circle edit" data-db-type="passenger" data-db-action="edit" data-passenger-id="${r.passengerId}" data-controller-action="EditPassenger"><i class="bi bi-pencil"></i></button>
+                                                                                    <button type="button" class="btn btn-danger btn-sm rounded-circle del" data-db-type="passenger" data-db-action="delete" data-passenger-id="${r.passengerId}" data-controller-action="DeletePassenger"><i class="bi bi-trash"></i></button>
+                                                            </td>`);
+            }
+            if(dbType == 'ticket')
+            {
+                $(`#${rowid}`).html(`<td style="width:50px"><button type="button" class="btn btn-sm select" data-ticket-id="${r.ticketId}" >Select</button</td>
+                                                               
+                                                        <td>${formatDate(new Date(r.journeyDate))}</td>
+                                                        <td>${r.train.trainName}</td> 
+                                                        <td>${getCategoryName(r.category)}</td>
+                                                        <td>${r.price}</td>
+                                                        
+                                                        <td>
+                                                                <button type="button" class="btn btn-primary btn-sm rounded-circle edit" data-db-type="ticket" data-db-action="edit" data-ticket-id="${r.ticketId}" data-controller-action="EditTicket"><i class="bi bi-pencil"></i></button>
+                                                                <button type="button" class="btn btn-danger btn-sm rounded-circle del" data-db-type="ticket" data-db-action="delete" data-ticket-id="${r.ticketId}" data-controller-action="DeleteTicket"><i class="bi bi-trash"></i></button>
+                                                        </td>`);
+            }
+            if (dbType == 'ticketitem') {
+                console.log($(`#${rowid}`));
+                $(`#${rowid}`).html( `<td><img src="/Pictures/${r.passenger.picture}" class="rounded-circle" style="width:40px" /></td>
+
+                                                                <td>${r.passenger.passengerName}</td>
+                                                                <td>${r.ticket.price}</td>
+                                                                <td>${r.quantity}</td>
+                                                                <td>
+                                                                       <button type="button" class="btn btn-primary btn-sm rounded-circle edit" data-db-type="ticketitem" data-db-action="edit"  data-ticket-id="${r.ticketId}" data-passenger-id="${r.passengerId}" data-controller-action="EditTicketItem"><i class="bi bi-pencil"></i></button>
+                                                                       //<button type="button" class="btn btn-danger btn-sm rounded-circle del" data-db-type="ticketitem" data-db-action="delete" data-ticket-id="${r.ticketId}" data-passenger-id="${r.passengerId}" data-controller-action="DeleteTicketItem"><i class="bi bi-trash"></i></button>
+                                                                </td>
+                                                        `);
+               
+            }
+
+        }
+        //Function replace row start
+        //Function form data builder end
+        //Function append to table start
+        function addToTable(dbType, r) {
+
+            if (dbType == "train") {
+                $(`#${dbType}Table tbody`).append(
+                    `<tr id="train_tr_${r.trainId}">
+                                                                                                                  <td>${r.trainName}</td>
+                                                                                                                          <td>${r.stationAddress}</td>
+                                                                                                                          <td>${r.destination}</td>
+                                                                                                                  <td>
+                                                                                                                                                <button type="button" class="btn btn-primary btn-sm rounded-circle edit" data-db-type="train"  data-db-action="edit" data-train-id="${r.trainId}" data-controller-action="EditTrain"><i class="bi bi-pencil"></i></button>
+                                                                                                                                                <button type="button" class="btn btn-danger btn-sm rounded-circle del" data-db-type="train"  data-db-action="delete" data-train-id="${r.trainId}" data-controller-action="DeleteTrain"><i class="bi bi-trash" ></i></button>
+                                                                                                                  </td>
+                                                                                                             </tr>`);
+            }
+            if (dbType == "passenger") {
+                $(`#${dbType}Table tbody`).append(
+                    `<tr id="passenger_tr_${r.passengerId}">
+                                                                                        <td style="width:50px"><img src="/Pictures/${r.picture}" style="width:40px" class="img-thumbnail rounded-circle" /></td>
+                                                                                            <td>${r.passengerName}</td>
+                                                                                            <td>${r.phone}</td>
+
+                                                                                                    <td>
+                                                                                                        <button type="button" class="btn btn-primary btn-sm rounded-circle edit" data-db-type="passenger" data-db-action="edit" data-passenger-id="${r.passengerId}" data-controller-action="EditPassenger"><i class="bi bi-pencil"></i></button>
+                                                                                                        <button type="button" class="btn btn-danger btn-sm rounded-circle del" data-db-type="passenger" data-db-action="delete" data-passenger-id="${r.passengerId}" data-controller-action="DeletePassenger"><i class="bi bi-trash"></i></button>
+                                                                                                    </td>
+                                                                                    </tr>`);
+            }
+            if (dbType == "ticket") {
+                $(`#${dbType}Table tbody`).append(
+                    `<tr id="passenger_tr_${r.ticketId}">
+                                                                                                            <td style="width:50px"><button type="button" class="btn btn-sm select" data-ticket-id="${r.ticketId}" >Select</button</td>
+                                                                                                            
+                                                                                                            <td>${formatDate(new Date(r.journeyDate))}</td>
+                                                                                                            <td>${r.train.trainName}</td>
+                                                                                                            <td>${getCategoryName(r.category)}</td>
+                                                                                                                    <td>${r.price}</td>
+
+                                                                                                    <td>
+                                                                                                                  <button type="button" class="btn btn-primary btn-sm rounded-circle edit" data-db-type="ticket" data-db-action="edit" data-ticket-id="${r.ticketId}" data-controller-action="EditTicket"><i class="bi bi-pencil"></i></button>
+                                                                                                                  <button type="button" class="btn btn-danger btn-sm rounded-circle del" data-db-type="ticket" data-db-action="delete" data-ticket-id="${r.ticketId}" data-controller-action="DeleteTicket"><i class="bi bi-trash"></i></button>
+                                                                                                    </td>
+                                                                                            </tr>`);
+            }
+            if (dbType == "ticketitem") {
+                $(`#${dbType}Table tbody`).append(
+                    `<tr id="ticketitem_tr_${r.ticketId}_${r.passengerId}">
+                                                                        <td><img src="/Pictures/${r.passenger.picture}" class="rounded-circle" style="width:40px" /></td>
+
+                                                                <td>${r.passenger.passengerName}</td>
+                                                                <td>${r.ticket.price}</td>
+                                                                <td>${r.quantity}</td>
+                                                                        <td>
+                                                                               <button type="button" class="btn btn-primary btn-sm rounded-circle edit" data-db-type="ticketitem" data-db-action="edit"  data-ticket-id="${r.ticketId}" data-passenger-id="${r.passengerId}" data-controller-action="EditTicketItem"><i class="bi bi-pencil"></i></button>
+                                                                                        //<button type="button" class="btn btn-danger btn-sm rounded-circle del" data-db-type="ticketitem" data-db-action="delete" data-ticket-id="${r.ticketId}" data-passenger-id="${r.passengerId}" data-controller-action="DeleteTicketItem"><i class="bi bi-trash"></i></button>
+                                                                        </td>
+                                                        </tr>`);
+
+            }
+        }
+        //Function append to table end
+        //Function date format
+        function formatDate(d) {
+            return [
+                d.getFullYear(),
+                (d.getMonth() + 1).toString().padStart(2, '0'),
+                d.getDate().toString().padStart(2, '0')
+            ].join('-');
+        }
+        function getCategoryName(category) {
+            //console.log(category);
+
+            if (category == '1') return 'AC';
+            if (category == '2') return 'Snigdha';
+            if (category == '3') return 'Shovon';
+            if (category == '4') return 'Shulov';
+            return '';
+
+        }
+
+    </script>
+}
+

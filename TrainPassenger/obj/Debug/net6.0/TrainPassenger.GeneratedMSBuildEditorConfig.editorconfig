@@ -1,0 +1,97 @@
+is_global = true
+build_property.TargetFramework = net6.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = TrainPassenger
+build_property.RootNamespace = TrainPassenger
+build_property.ProjectDir = H:\Projects\Train Passenger with MVC Core\TrainPassenger\TrainPassenger\
+build_property.RazorLangVersion = 6.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = H:\Projects\Train Passenger with MVC Core\TrainPassenger\TrainPassenger
+build_property._RazorSourceGeneratorDebug = 
+
+[H:/Projects/Train Passenger with MVC Core/TrainPassenger/TrainPassenger/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Projects/Train Passenger with MVC Core/TrainPassenger/TrainPassenger/Views/Main/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFpblxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Projects/Train Passenger with MVC Core/TrainPassenger/TrainPassenger/Views/Main/_CreateItem.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFpblxfQ3JlYXRlSXRlbS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Projects/Train Passenger with MVC Core/TrainPassenger/TrainPassenger/Views/Main/_CreatePassenger.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFpblxfQ3JlYXRlUGFzc2VuZ2VyLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Projects/Train Passenger with MVC Core/TrainPassenger/TrainPassenger/Views/Main/_CreateTicket.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFpblxfQ3JlYXRlVGlja2V0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Projects/Train Passenger with MVC Core/TrainPassenger/TrainPassenger/Views/Main/_CreateTicketItem.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFpblxfQ3JlYXRlVGlja2V0SXRlbS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Projects/Train Passenger with MVC Core/TrainPassenger/TrainPassenger/Views/Main/_CreateTrain.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFpblxfQ3JlYXRlVHJhaW4uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Projects/Train Passenger with MVC Core/TrainPassenger/TrainPassenger/Views/Main/_EditItem.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFpblxfRWRpdEl0ZW0uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Projects/Train Passenger with MVC Core/TrainPassenger/TrainPassenger/Views/Main/_EditPassenger.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFpblxfRWRpdFBhc3Nlbmdlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Projects/Train Passenger with MVC Core/TrainPassenger/TrainPassenger/Views/Main/_EditTicket.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFpblxfRWRpdFRpY2tldC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Projects/Train Passenger with MVC Core/TrainPassenger/TrainPassenger/Views/Main/_EditTicketItem.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFpblxfRWRpdFRpY2tldEl0ZW0uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Projects/Train Passenger with MVC Core/TrainPassenger/TrainPassenger/Views/Main/_EditTrain.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFpblxfRWRpdFRyYWluLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Projects/Train Passenger with MVC Core/TrainPassenger/TrainPassenger/Views/Main/_PassengerTable.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFpblxfUGFzc2VuZ2VyVGFibGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Projects/Train Passenger with MVC Core/TrainPassenger/TrainPassenger/Views/Main/_TicketItemTable.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFpblxfVGlja2V0SXRlbVRhYmxlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Projects/Train Passenger with MVC Core/TrainPassenger/TrainPassenger/Views/Main/_TicketTable.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFpblxfVGlja2V0VGFibGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Projects/Train Passenger with MVC Core/TrainPassenger/TrainPassenger/Views/Main/_TrainTable.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTWFpblxfVHJhaW5UYWJsZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Projects/Train Passenger with MVC Core/TrainPassenger/TrainPassenger/Views/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Projects/Train Passenger with MVC Core/TrainPassenger/TrainPassenger/Views/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Projects/Train Passenger with MVC Core/TrainPassenger/TrainPassenger/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[H:/Projects/Train Passenger with MVC Core/TrainPassenger/TrainPassenger/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 

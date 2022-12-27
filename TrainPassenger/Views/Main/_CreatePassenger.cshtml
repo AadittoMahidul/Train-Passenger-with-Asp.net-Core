@@ -1,0 +1,26 @@
+﻿@model PassengerInputModel
+
+<form id="f" name="f" data-db-type="passenger" data-db-action="insert" data-controller-action="CreatePassenger">
+
+    <div class="form-group row mb-1">
+        <label asp-for="PassengerName" class="col-form-label col-2"></label>
+        <div class="col-10">
+            <input asp-for="PassengerName" class="form-control" />
+            <span asp-validation-for="PassengerName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row mb-1">
+        <label asp-for="Phone" class="control-label col-2"></label>
+        <div class="col-10">
+            <input asp-for="Phone" class="form-control" />
+            <span asp-validation-for="Phone" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row mb-1">
+        <label asp-for="Picture" class="control-label col-2"></label>
+        <div class="col-10">
+            <input type="file" asp-for="Picture" class="form-control col-2" />
+            <span asp-validation-for="Picture" class="text-danger"></span>
+        </div>
+    </div>
+</form>

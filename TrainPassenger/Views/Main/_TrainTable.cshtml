@@ -1,0 +1,37 @@
+﻿@model IEnumerable<Train>
+<table class="table table-bordered" id="trainTable">
+    <thead style="background-color:darkgoldenrod">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.TrainName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StationAddress)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Destination)
+            </th>           
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr id="train_tr_@item.TrainId" style="background-color:blanchedalmond">
+                <td>
+                    @Html.DisplayFor(modelItem => item.TrainName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StationAddress)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Destination)
+                </td>
+                <td>
+                    <button type="button" class="btn btn-primary btn-sm rounded-circle edit" data-db-type="train" data-db-action="edit" data-train-id="@item.TrainId" data-controller-action="EditTrain"><i class="bi bi-pencil"></i></button>
+                    <button type="button" class="btn btn-danger btn-sm rounded-circle del" data-db-type="train" data-db-action="delete" data-train-id="@item.TrainId" data-controller-action="DeleteTrain"><i class="bi bi-trash"></i></button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
